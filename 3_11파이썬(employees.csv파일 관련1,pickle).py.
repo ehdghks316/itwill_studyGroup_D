@@ -1,0 +1,240 @@
+[문제71] last_name, 입사한 요일(한글)을 출력해주세요.
+import csv
+import datetime
+import time
+import calendar
+
+def wday(arg):
+    return datetime.datetime.strptime(arg,'%Y-%m-%d')
+
+with open("c:/data/employees.csv") as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    for i in emp_csv:
+        print(i[2],'월화수목금토일'[datetime.datetime.strptime(i[5],'%Y-%m-%d').weekday()])
+
+
+[문제72] last_name, 근무 일수를 출력해주세요.
+(datetime.date.today() - datetime.datetime.strptime('2021-12-16','%Y-%m-%d').date()).days
+(datetime.datetime.now()- datetime.datetime.strptime('2021-12-16','%Y-%m-%d')).days
+
+with open("c:/data/employees.csv") as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    for i in emp_csv:
+        print(i[2],(datetime.datetime.now()-datetime.datetime.strptime(i[5],'%Y-%m-%d')).days)
+
+[문제73] 2001-01-13일에 입사한 사원의 이름과 입사일을 출력하세요.
+with open("c:/data/employees.csv") as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    for i in emp_csv:
+        if i[5] == '2001-01-13':
+            print(i[2],i[5])
+        
+with open("c:/data/employees.csv") as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    for i in emp_csv:
+        if datetime.datetime.strptime(i[5],'%Y-%m-%d') == datetime.datetime.strptime("2001-01-13",'%Y-%m-%d'):
+            print(i[2],i[5])
+        
+        
+[문제74] 2002 년도에 입사한 사원들의 이름과 입사일을 출력하세요.
+with open("c:/data/employees.csv") as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    for i in emp_csv:
+        if i[5][:4] == "2002":
+            print(i[2],i[5])
+        
+with open("c:/data/employees.csv") as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    for i in emp_csv:
+        if datetime.datetime.strptime(i[5],'%Y-%m-%d').year == datetime.datetime.strptime('2001','%Y').year: # 2002만 넣어서 출력 가능
+            print(i[2],i[5])
+        
+[문제75] job_id가 ST_CLERK인 사원들의 정보를 출력해주세요. 단 가장 최근에 입사한 사원부터 출력
+
+with open("c:/data/employees.csv") as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    x = []
+    for i in emp_csv:
+        if i[6] == 'ST_CLERK':
+            x.append(i)
+
+import operator
+emp_list_sorted = sorted(x, reverse=True,key=operator.itemgetter(5))
+for i in emp_list_sorted:
+    print(i[0],i[2],i[5])
+    
+
+with open("c:/data/employees.csv") as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    emp_list = [[i[0],datetime.datetime.strptime(i[5],'%Y-%m-%d').date(),i[6]] for i in emp_csv if i[6] == 'ST_CLERK' ]
+    
+emp_list
+emp_list_sorted = sorted(emp_list, reverse=True,key=operator.itemgetter(1))
+for i in emp_list_sorted:
+    print(i[0],i[1],i[2])
+    
+emp_list_sorted = sorted(emp_list, reverse=True,key=lambda arg:arg[1])
+for i in emp_list_sorted:
+    print(i[0],i[1],i[2])
+
+[문제76] 년도별 급여의 총액을 구하세요.
+# 년도별로 구분, 총액
+year_sum = {}
+
+with open('c:/data/employees.csv') as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    for i in emp_csv:
+        y = datetime.datetime.strptime(i[5],'%Y-%m-%d').year
+        if y in year_sum.keys():
+            year_sum[y] = year_sum[y] + int(i[7])
+        else:
+            year_sum[y] = int(i[7])
+            
+year_sum_sorted = sorted(year_sum.items(),reverse=False,key=operator.itemgetter(1))
+
+with open('c:/data/q76.txt','w', newline='') as file: # newline ='' -> 한줄 안 띄우기
+    q76_write = csv.writer(file)
+    q76_write.writerows(year_sum_sorted)
+
+with open('c:/data/q76.txt','r') as file:
+    q76_csv = csv.reader(file)
+    for i in q76_csv:
+        print(i)
+        
+[문제77] 요일별(한글요일) 급여의 총액을 구하세요.
+day_sum = {}
+
+with open('c:/data/employees.csv') as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    for i in emp_csv:
+        y = datetime.datetime.strptime(i[5],'%Y-%m-%d').weekday()
+        if y in day_sum.keys():
+            day_sum[y] = day_sum[y] + int(i[7])
+        else:
+            day_sum[y] = int(i[7])
+
+day_sum_sorted = sorted(day_sum.items(), reverse=False, key=operator.itemgetter(0))            
+week_sum_lst = [('월화수목금토일'[i[0]]+'요일',i[1]) for i in day_sum_sorted] # 튜플(), 리스트[] 다 됨
+
+with open('c:/data/q77.txt','w',newline='') as file:
+    q77_write = csv.writer(file)
+    q77_write.writerows(week_sum_lst) # writerows : 전체행
+
+with open('c:/data/q77.txt', 'r') as file:
+    q77_txt = csv.reader(file)
+    for i in q77_txt:
+        print(i)
+        
+with open('c:/data/q77.txt','w',newline='') as file:
+    q77_write = csv.writer(file)
+    for i in day_sum_sorted:
+        q77_write.writerow(('월화수목금토일'[i[0]]+'요일',i[1])) # writerow : 한행씩
+            
+
+★ pickle
+- 변수형태를 그대로 유지해서 파일에 저장시키고 불러올 수 있는 모듈
+- 바이너리 형태로 저장
+
+import pickle
+
+lst = ['a','b','c']
+file = open("c:/data/lst.txt","wb")
+pickle.dump(lst,file)
+file.close()
+
+file = open("c:/data/lst.txt","rb")
+lst_new = pickle.load(file)
+lst_new
+file.close()
+
+day_sum_sorted
+
+file = open("c:/data/day_sum_sorted.txt","wb")
+pickle.dump(day_sum_sorted,file)
+file.close()
+
+file = open("c:/data/day_sum_sorted.txt","rb")
+day_sum_sorted_new = pickle.load(file)
+day_sum_sorted_new
+file.close()
+
+[문제78] 부서별 인원수를 출력해주세요.(소속부서가 없는 인원수도 생성해주세요)/ 파일로 write하rㅣ
+dept_sum = {}
+with open('c:/data/employees.csv') as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    for i in emp_csv:
+        y = (lambda arg : int(arg) if arg != '' else 999)(i[-1])
+        if y in dept_sum.keys():
+            dept_sum[y] = dept_sum[y] + 1
+        else:
+            dept_sum[y] = 1
+dept_sum            
+dept_sum_sorted = sorted(dept_sum.items(),reverse=False,key=operator.itemgetter(0))        
+
+for i in dept_sum_sorted:
+    print((lambda arg: '소속부서(X)' if arg==999 else arg)(i[0]),i[1])
+    
+with open('c:/data/q78.txt','w',newline='') as file:
+    q78_write = csv.writer(file)
+    for i in dept_sum_sorted:
+        q78_write.writerow([(lambda arg: '소속부서(X)' if arg==999 else arg)(i[0]),i[1]]) # writerows : 전체행
+         
+
+with open('c:/data/employees.csv', 'r') as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    dept_lst = [(lambda arg : int(arg) if arg != '' else 999)(i[-1])for i in emp_csv]
+
+dept_lst        
+
+import collections
+collections.Counter(dept_lst)
+
+[문제 79] 월별 입사 인원수를 구하세요.
+# dictionary 방식
+mon_sum = {}
+with open('c:/data/employees.csv','r') as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    for i in emp_csv:
+        y = datetime.datetime.strptime(i[5],'%Y-%m-%d').month
+        if y in mon_sum:
+            mon_sum[y] = mon_sum[y] + 1
+        else:
+            mon_sum[y] = 1
+mon_sum
+mon_num_sorted = sorted(mon_sum.items(),reverse=False,key=operator.itemgetter(0))
+
+with open('c:/data/q79.txt','w',newline='') as file:
+    q79_write = csv.writer(file)
+    q79_write.writerows(mon_num_sorted)
+
+with open('c:/data/q79.txt','r') as file:
+    q79_csv = csv.reader(file)
+    for i in q79_csv:
+        print(i)
+        
+# counter 방식
+with open('c:/data/employees.csv','r') as file:
+    emp_csv = csv.reader(file)
+    next(emp_csv)
+    mon_list = [datetime.datetime.strptime(i[5],'%Y-%m-%d').month for i in emp_csv]
+
+mon_list
+mon_sum_sorted2 = sorted(collections.Counter(mon_list).items())
+mon_sum_sorted2
+
+# get방식
+
+# collections.defaultdict 방식
