@@ -1,0 +1,211 @@
+12.16 첫 수업
+★통찰력(나만의 볼 수 있는 것) 키우기
+1. 책을 많이 읽기(한 달에 한 두권씩),심리관련 책도 읽기(사람의 마음을 파악하기,읽어보기) 
+2. '데이터'가 들어간 모든 것을 읽기
+3. 글쓰는 연습
+4. 다양한 경험해보기( 돌아다니면서 모든 것들에 '왜?'를 생각해보기, 궁금해하기),(분석해보기)
+
+※나만의 교재만들기(교육내용을 토대로, 더 필요한 정보들 넣어서)
+
+강사 피시
+http://192.168.21.31/
+오라클 회사 취업 도전(찾아보기, 경력직)
+
+jdk 설정 - 오라클 소프트웨어 설치 - sqldeveloper(tool)
+＃jdk 필요한 이유? - 자바 환경에서 돌아가는 프로그램을 개발하는데 필요한 툴을 모아놓은 소프트웨어 패키지 
+(줌으로 내컴)jdk-8u271-windows-x64.exec -> jdk-8u271-windows-x64.exe(폴더 옵션에 알려진 파일옵션 숨기기 체크 풀기) 
+
+java -version 확인
+
+집에서 수업들을 때 프로그램파일에 자바라는 파일이 있으면 설치를 안 해도 되고 환경설정만 하면됨
+2시 30분에 재출결
+
+jdk설치후에-
+C:\Users\user>java -version
+'java'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는
+배치 파일이 아닙니다.
+
+해결방법: path 설정
+변수이름 : JAVA_HOME
+변수 값 : C:\Program Files\Java\jdk1.8.0_271
+
+오라클 설치 패스워드 oracle(기억할 수 있는 것으로 아무거나)
+
+------------모르는 단어-----------------
+그리드(저비용으로 고효율?), 클라우드??(search)
+olap?
+정형데이터, 비정형데이터?
+하둡?
+------------------------------------------
+
+★오라클 sql 수업
+conn sys/oracle as sysdba
+접속      패스워드 
+show user
+보여줘라 사용자
+select * from dba_users;
+                   테이블(데이터프레임)
+#(ctrl + enter)질의 결과 보기
+#sql문장 주석처리 '--' 
+#hr-human resource
+#expired & locked 만료되고 휴먼계정
+
+-----------------
+select * from dba_users;
+
+alter user hr identified by hr account unlock;
+select *from dba_users;
+
+alter user hr
+identified by hr --패스워드 수정 하는 절
+account unlock; --계정을 풀어주는 절
+-- account lock 계정 잠그는 절
+select *from dba_users;
+#처음에 오라클 디벨로퍼에서 dba만들고 hr(,사용자)의 계정과 패스워드를 풀어주기
+
+■ select 문
+데이터베이스에서 정보를 검색하는 문
+select 컬럼이름, 컬럼이름 --절
+from 테이블이름; --절
+
+select * from tab;
+select * from employees;
+select employee_id, last_name, salary
+from employees;
+
+--단일행 주석
+/*여러행 주석 */ 
+/*
+SELECT 
+    mployee_id, --사원번호
+    last_naver, --성
+    salary  --급여
+FROM employees; --보통 이러한 포맷
+*/
+
+테이블의 구조 확인
+desc employees
+
+이름             널?       유형           
+-------------- -------- ------------ 
+EMPLOYEE_ID    NOT NULL NUMBER(6)    --숫자 입력 --NOT NULL  null값을 불허하겠다. 꼭 입력해야한다.(필수항목)(PYTHON과 R에서도 사용 의미가 같지 않음)
+FIRST_NAME              VARCHAR2(20) --문자 입력
+LAST_NAME      NOT NULL VARCHAR2(25) 
+EMAIL          NOT NULL VARCHAR2(25) 
+PHONE_NUMBER            VARCHAR2(20) 
+HIRE_DATE      NOT NULL DATE         --날짜 입력
+JOB_ID         NOT NULL VARCHAR2(10) 
+SALARY                  NUMBER(8,2)  
+COMMISSION_PCT          NUMBER(2,2)  
+MANAGER_ID              NUMBER(6)    
+DEPARTMENT_ID           NUMBER(4)  
+
+산술연산자
+*, /, +, -
+number : *,/,+,- 가능
+date : +, - 가능
+char : 사칙연산 불가능
+
+산술연산자 우선순위
+1.*,/
+2.+,-
+예)
+select ((((a * b) / c) + d) - e)  --왼쪽에서 오른쪽 순서로(귀찮더라도 괄호로 표시하기)
+from test;
+예)연산자 우선순위를 제어하려면 괄호를 이용하면된다.
+select ((a * ((b / c) + d ) - e)
+from test;
+
+select salary, salary *12, hire_date, hire_date - 1
+from employees;
+
+select employee_id, salary, commission_pct, salary * 12 * commission_pct
+from employees;
+
+null값 정의
+-null은 사용할 수 없거나, 할당되지 않았거나, 알 수 없거나, 적용할 수 없는 값
+-null은 0, 공백이 아니다.(=스페이스바로 한 칸 띄운 것도 null이 아니다)
+
+/* sql문이 아님(nvl 함수를 풀어서 쓴것)
+if commission_pct is null then
+    1
+else
+    commission_pct
+end if;      
+*/
+
+--nvl 함수 : null값을 다른값으로 대체하는 함수
+select employee_id, salary, commission_pct, salary * 12 * nvl(commission_pct,1) --표현식
+from employees;
+--select문에서 어떤 함수를 사용하더라도 실제 데이터에 타격은 없다
+
+열별칭
+- 열이름을 다른 이름으로 바꿔서 출력
+- 열이름 바로 뒤에 입력해야한다.
+- 열이름과 별칭 사이에는 as 키워드를 사용할 수 있다.(선택)
+- 열별칭에 공백, 특수문자(_,$,# 제외), 대소문자를 구분하려면 큰 따옴표를 묶어야 한다.
+- 열별칭에 숫자가 먼저 나오면 큰 따옴표를 묶어야한다.
+
+select employee_id, salary, commission_pct, salary * 12 * nvl(commission_pct,1) annual_salary --별칭(의미있는 것으로)
+from employees;
+
+select employee_id as 사번, salary 급여 --as를 사용해도되고 사용안해도 별칭이 나옴
+from employees;
+
+연결연산자
+- 열이나 문자열을 다른 열에 연결한다.
+- 두개의 세로선||으로 표현
+- 결과 열은 문자식으로 생성한다.
+select last_name || first_name
+from employees;
+
+select last_name || salary || commission_pct --사칙연산의 null과는 차이가 있음
+from employees;
+
+select 문자 || null /*문자출력*/
+from test;
+
+select last_name, salary || commission_pct
+from employees;
+
+리터럴 문자열
+- 날짜, 문자는 작은따옴표로 묶어야 한다.
+
+select '사원번호는 ' || employee_id || '입니다'
+from employees;
+
+select '000' || salary --숫자는 작은 따옴표를 붙여도 되고 안붙여도 되는데 0은 2개이상은 작은 따옴표 있어야 갯수만큼 나옴
+from employees;
+
+select 'My name is ' || last_name
+from employees;
+
+select 'My name''s ' || last_name --작은 따옴표를 안에서 표시하는 것
+from employees;
+
+q'[리터럴문자]' --대괄호 안에 있는 문자들 그대로 나옴
+q'<리터럴문자>' --꺽새도 대괄호랑 같음
+q'(리터럴문자)' -- =
+q'!리터럴문자!' -- =
+q'{리터럴문자}' -- =
+select q'!My name`s !' || last_name
+from employees;
+
+중복행 제거(distinct) --정렬이 아닌 것으로 나오는 이유는 비용문제 때문에 오라클에서 이렇게 만듬
+-distinct는 select절에 한번만 사용해야 한다.
+
+select distinct department_id
+from employees;
+--hash 알고리즘 f10 눌러서 확인해보기
+
+select distinct department_id, job_id 
+from employees;
+
+
+sql 플러스 - 유지관리 어렵(커맨드라인) 컴퓨터user아이디를 영어로 바꿔놓고 설치
+---cmd창에서 sqlplus hr/hr  (id, pw)
+
+sql developer - 보통 사용하는 툴(자바프로그램으로 만들어짐 자바버쳐머신이 있어야함)
+
+컬럼이 의미하는 것이 무엇인지(고객과의 소통)
+테이블의 성격 의미를 파악해야함, 테이블의 구조정보(테이블 모델도 확인)
